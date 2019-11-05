@@ -2,6 +2,10 @@
 
 namespace App\Providers;
 
+namespace App\Providers;
+
+use Illuminate\Routing\UrlGenerator;
+
 // use App\Project;
 // use App\Task;
 // use App\Observers\ProjectObserver;
@@ -30,7 +34,5 @@ class AppServiceProvider extends ServiceProvider
     if (env('APP_ENV') !== 'local') {
       $url->forceSchema('https');
     }
-    // Project::observe(ProjectObserver::class);
-    // Task::observe(TaskObserver::class);
   }
 }
