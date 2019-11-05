@@ -1,29 +1,30 @@
 sudo: required
+
 services:
   - docker
 
+# env:
+#   global:
+#     - SHA=$(git rev-parse HEAD)
+#     - CLOUDSDK_CORE_DISABLE_PROMPTS=1
+
 before_install:
-  - docker build -t egbodofo/birdboard-test -f Dockerfile .
-script:
-  - docker run egbodofo/birdboard-test vendor/bin/phpunit
+  - openssl aes-256-cbc -K $encrypted_0c35eebf403c_key -iv $encrypted_0c35eebf403c_iv -in service-account.json.enc -out service-account.json -d
+  - curl https://sdk.cloud.google.com | bash > /dev/null;
+  - source $HOME/google-cloud-sdk/path.bash.inc
+  - gcloud components update kubectl
+  - gcloud auth activate-service-account --key-file service-account.json
+  # - gcloud config set project birdboard-k8s
+  # - gcloud config set compute/zone us-central1-a
+  # - gcloud container clusters get-credentials wishmart-cluster
+  #   # Log in to the docker CLI
+  # - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  # - docker build -t egbodofo/client-test -f ./client/Dockerfile.dev ./client
+# script:
+#   - docker run -e CI=true egbodofo/client-test npm run test -- --coverage
 
-after_success:
-  - docker build -t egbodofo/birdboard-app .
-  # - docker build -t egbodofo/birdboard-nginx -f Dockerfile.nginx .
-  - echo $DOCKER_PASSWORD | docker login -u $DOCKER_ID --password-stdin
-  - docker push egbodofo/birdboard-app
-  # - docker push egbodofo/birdboard-nginx
-
-deploy:
-  provider: elasticbeanstalk
-  region: us-east-2
-  app: multi-birdboard
-  env: MultiBirdboard-env
-  bucket_name: elasticbeanstalk-us-east-2-008951252297
-  bucket_path: birdboard
-  on:
-    branch: master
-  access_key_id: $AWS_ACCESS_KEY
-  secret_access_key:
-    secure: $AWS_SECRET_KEY
-# test
+# deploy:
+#   provider: script
+#   script: bash ./deploy.sh
+#   on:
+#     branch: master
