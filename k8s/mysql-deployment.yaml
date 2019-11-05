@@ -33,3 +33,4 @@ spec:
                 secretKeyRef:
                   name: mysqlpassword
                   key: MYSQLPASSWORD
+# stutord
